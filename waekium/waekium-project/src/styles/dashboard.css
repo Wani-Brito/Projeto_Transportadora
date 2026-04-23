@@ -1,0 +1,180 @@
+/* CONFIGURAÇÃO GERAL DA PÁGINA */
+body {
+  margin: 0; /* remove espaçamento padrão do navegador */
+  font-family: Arial, sans-serif; /* define a fonte padrão */
+  background: #f5f6f8; /* cor de fundo da página */
+  color: #333; /* cor padrão do texto */
+  height: 100vh; /* altura total da tela */
+}
+
+/* CONTAINER PRINCIPAL DO APP */
+.app {
+  display: flex; /* deixa os elementos lado a lado (sidebar + conteúdo) */
+  color: #333;
+  justify-content: space-between; /* separa os elementos */
+}
+
+/* BARRA LATERAL (MENU) */
+.sidebar {
+  width: 200px; /* largura da sidebar */
+  background: #ffffff; /* fundo branco */
+  height: 100vh; /* ocupa toda altura da tela */
+  padding: 20px; /* espaço interno */
+  position: sticky; /* deixa fixa ao rolar a página */
+  top: 0; /* fixa no topo */
+  border-right: 1px solid #ddd; /* linha separando do conteúdo */
+  color: #333;
+}
+
+/* TÍTULO DA SIDEBAR */
+.sidebar h2 {
+  font-family: "Cinzel", serif; /* fonte personalizada */
+  color: #333;
+}
+
+.sidebar h3 {
+  font-family: Arial, sans-serif; /* fonte personalizada */
+  font-size: 10px;
+  margin-top: -20px; /* puxa um pouco pra cima */
+  color: #333;
+}
+
+/* LISTA DA SIDEBAR */
+.sidebar ul {
+  list-style: none; /* remove bolinhas da lista */
+  padding: 0; /* remove espaço interno */
+  margin-top: 45px; /* espaço acima da lista */
+}
+
+/* ITENS DO MENU */
+.sidebar li {
+  padding: 10px; /* espaço interno */
+  margin-top: 10px; /* espaço entre itens */
+  align-items: center; /* alinha verticalmente */
+  cursor: pointer; /* muda o cursor ao passar o mouse */
+}
+
+/* ITEM ATIVO DO MENU */
+.sidebar .active {
+  background: #eee; /* fundo cinza */
+  border-radius: 8px; /* borda arredondada */
+}
+
+/* ÁREA PRINCIPAL (CONTEÚDO) */
+.main {
+    justify-content: space-between;
+  flex: 1; /* ocupa todo espaço restante */
+}
+
+/* HEADER (TOPO DO DASHBOARD) */
+.header {
+  display: flex;
+  justify-content: space-between; /* separa título e usuário */
+  align-items: center; /* alinha verticalmente */
+  padding: 20px;
+  position: sticky; /* deixa fixo no topo */
+  top: 0; /* fixa no topo */
+  background: white;
+  border-bottom: 1px solid #ddd; /* linha inferior */
+}
+
+/* BLOCO DO USUÁRIO (NOME + FOTO) */
+.user {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* espaço entre nome e avatar */
+}
+
+/* AVATAR (BOLINHA DO USUÁRIO) */
+.avatar {
+  width: 30px;
+  height: 30px;
+  background: #ccc; /* cor cinza */
+  border-radius: 50%; /* deixa redondo */
+}
+
+/* CONTEÚDO PRINCIPAL */
+.content {
+  padding: 20px;
+  margin-top: -20px; /* puxa um pouco pra cima */
+}
+
+/* GRID DO DASHBOARD */
+.grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* divide em 2 colunas */
+  gap: 20px; /* espaço entre os cards */
+}
+
+/* ===== CARDS ===== */
+
+/* (TEM UM ERRO AQUI ⚠️)
+   .card status deveria ser .card .status */
+.card .status {
+  background: white;
+  padding: 0px;
+  border-radius: 12px;
+  height: 80px;
+  width: 50%;
+}
+
+/* CARD PADRÃO */
+.card {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+}
+
+/* CARD GRANDE */
+.large {
+  grid-column: span 2; /* ocupa 1 coluna */
+  height: 200px;
+  width: 100%;
+}
+
+/* CARD QUE OCUPA DUAS COLUNAS */
+.full {
+  grid-column: span 1;
+}
+
+/* STATUS (ETIQUETAS) */
+.status {
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+/* CORES DOS STATUS */
+.blue { background: #cfe8ff; }
+.green { background: #c8f7c5; }
+.yellow { background: #fff3c4; }
+
+/* LISTA DE USUÁRIOS */
+.users {
+  display: flex;
+  gap: 30px; /* espaço entre usuários */
+}
+
+/* BLOCO INDIVIDUAL DO USUÁRIO */
+.user {
+  text-align: center;
+}
+
+/* CÍRCULO DO USUÁRIO */
+.circle {
+  width: 50px;
+  height: 50px;
+  background: #ddd;
+  border-radius: 50%; /* deixa redondo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+}
+
+/* AGENDA */
+.agenda div {
+  display: flex;
+  gap: 10px; /* espaço entre horário e texto */
+  margin-top: 10px;
+}
