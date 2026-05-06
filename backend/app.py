@@ -1,11 +1,23 @@
 import sqlite3
 from flask import Flask, request, jsonify
-from database import get_db_connection, init_db 
+from backend.database import get_db_connection, init_db
 from flask_cors import CORS
+from backend.routes.auth_routes import auth_bp
+from flask import Blueprint
+auth_bp = Blueprint('auth', __name__)
+user_bp = Blueprint('user', __name__)
+from werkzeug.security import generate_password_hash
+
 
 app = Flask(__name__)
 CORS(app) # Habilita CORS para permitir requisições de outras origens (útil para front-end)
+
+app.secret_key = "chave"
+
+app.register_blueprint(auth_bp)
+app.register_blueprint(user_bp)
 init_db()
+
 
 @app.route("/")
 def home():
@@ -48,7 +60,7 @@ def salvar_no_banco(dados):
         cursor.execute('''
             INSERT INTO Login (id_user, tipo_user, data_admin, senha)
             VALUES (?, 2, date('now'), ?)
-        ''', (id_funcionario, dados['senha']))
+        ''',   (id_funcionario, generate_password_hash(dados['senha'])))
 
         conn.commit()
         return {"status": "sucesso", "id": id_funcionario}
@@ -62,42 +74,7 @@ def salvar_no_banco(dados):
     finally:
         conn.close()
 
-@app.route("/cadastrar", methods=['POST'])
-def rota_cadastrar():
-    dados = request.get_json()
-    if not dados:
-        return jsonify({"erro": "Dados não enviados"}), 400
-    
-    resultado = salvar_no_banco(dados)
-    
-    if resultado['status'] == "sucesso":
-        return jsonify(resultado), 201
-    return jsonify(resultado), 400
 
-@app.route("/login", methods=['POST'])
-def rota_login():
-    dados = request.get_json()
-    cpf = dados.get('cpf')
-    senha = dados.get('senha')
-
-    conn = get_db_connection()
-    # Busca o usuário pelo CPF e verifica a senha na tabela Login
-    user = conn.execute('''
-        SELECT f.id_funcionario, f.nome, l.senha 
-        FROM Funcionario f
-        JOIN Login l ON f.id_funcionario = l.id_user
-        WHERE f.cpf = ?
-    ''', (cpf,)).fetchone()
-    conn.close()
-
-    if user and user['senha'] == senha:
-        return jsonify({
-            "status": "logado",
-            "id": user['id_funcionario'],
-            "nome": user['nome']
-        }), 200
-    
-    return jsonify({"status": "erro", "mensagem": "CPF ou senha incorretos"}), 401
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

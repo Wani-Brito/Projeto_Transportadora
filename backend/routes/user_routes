@@ -1,0 +1,33 @@
+from flask import Blueprint, request, jsonify
+from database import get_db_connection, init_db
+user_bp = Blueprint("user", __name__)
+
+@user_bp.route("/cadastrar", methods=['POST'])
+def rota_cadastrar():
+    dados = request.get_json()
+
+    if not dados:
+        return jsonify({"erro": "Dados não enviados"}), 400
+
+    try:
+        conn = get_db_connection()
+
+        conn.execute("""
+            INSERT INTO Funcionario (nome, cpf, email)
+            VALUES (?, ?, ?)
+        """, (
+            dados["nome"],
+            dados["cpf"],
+            dados["email"]
+        ))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({"status": "sucesso"}), 201
+
+    except Exception as e:
+        return jsonify({
+            "status": "erro",
+            "erro": str(e)
+        }), 400
