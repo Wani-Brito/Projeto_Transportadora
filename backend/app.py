@@ -2,20 +2,23 @@ import sqlite3
 from flask import Flask, request, jsonify
 from backend.database import get_db_connection, init_db
 from flask_cors import CORS
-from backend.routes.auth_routes import auth_bp
 from flask import Blueprint
-auth_bp = Blueprint('auth', __name__)
-user_bp = Blueprint('user', __name__)
+from backend.routes.auth_routes import auth_bp
+from backend.routes.user_routes import user_bp
+from backend.routes.ponto_routes import ponto_bp
 from werkzeug.security import generate_password_hash
+from backend.routes.face_routes import face_bp
 
 
 app = Flask(__name__)
 CORS(app) # Habilita CORS para permitir requisições de outras origens (útil para front-end)
 
-app.secret_key = "chave"
+app.config["SECRET_KEY"] = "senha"
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(user_bp)
+app.register_blueprint(face_bp)
+app.register_blueprint(ponto_bp)
 init_db()
 
 
@@ -46,28 +49,26 @@ def salvar_no_banco(dados):
             cursor.execute("INSERT INTO Cidade (cidade, id_est) VALUES (?, ?)", 
                            (dados['cidade'], id_est))
             id_cid = cursor.lastrowid
-
-        # 2. INSERIR FUNCIONÁRIO
         cursor.execute('''
-            INSERT INTO Funcionario (nome, cpf, telefone, email, endereco, cep, id_cid, id_est)
+            INSERT INTO Funcionario (nome, cpf, telefone, email, endereco, cep, id_cid, id_est, id_funcao)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ''', (dados['nome'], dados['cpf'], dados['telefone'], dados['email'], 
-              dados['endereco'], dados['cep'], id_cid, id_est))
+              dados['endereco'], dados['cep'], id_cid, id_est, dados['id_funcao']))
         
         id_funcionario = cursor.lastrowid
 
         # 3. CRIAR LOGIN (Ligado ao funcionário)
         cursor.execute('''
-            INSERT INTO Login (id_user, tipo_user, data_admin, senha)
-            VALUES (?, 2, date('now'), ?)
-        ''',   (id_funcionario, generate_password_hash(dados['senha'])))
+            INSERT INTO Login (id_user, tipo_user, senha)
+            VALUES (?, ?, ?)
+        ''',   (id_funcionario, 2, generate_password_hash(dados['senha'])))
 
         conn.commit()
         return {"status": "sucesso", "id": id_funcionario}
 
     except sqlite3.IntegrityError:
         conn.rollback()
-        return {"status": "erro", "mensagem": "CPF já cadastrado."}
+        return {"status": "erro", "mensagem": str(e)}
     except Exception as e:
         conn.rollback()
         return {"status": "erro", "mensagem": str(e)}

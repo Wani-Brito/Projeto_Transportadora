@@ -1,9 +1,10 @@
 import os
 import sqlite3 # Importa a biblioteca para trabalhar com SQLite
-
+from werkzeug.security import generate_password_hash
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "database.db")
+
 
 def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
@@ -30,8 +31,15 @@ def init_db(): # Função para inicializar o banco de dados, criando as tabelas 
     );
     CREATE TABLE IF NOT EXISTS Tipo_User (
         id_tipo INTEGER PRIMARY KEY AUTOINCREMENT,
-        descricao VARCHAR(50)
+        nome_tipo TEXT NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS funcoes (
+        id_funcao INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE  ,
+        nome_funcao TEXT NOT NULL UNIQUE,
+        salario REAL NOT NULL,
+        carga_horaria_semanal INTEGER DEFAULT 44,
+        ativo INTEGER DEFAULT 1
+    );  
     CREATE TABLE IF NOT EXISTS Funcionario (
         id_funcionario INTEGER PRIMARY KEY AUTOINCREMENT,
         nome VARCHAR(100) NOT NULL,
@@ -42,12 +50,19 @@ def init_db(): # Função para inicializar o banco de dados, criando as tabelas 
         cep VARCHAR(9),
         id_cid INTEGER,
         id_est INTEGER,
-        FOREIGN KEY (id_cid) REFERENCES Cidade(id_cid),
-        FOREIGN KEY (id_est) REFERENCES Estado(id_est)
+        id_funcao INTEGER NOT NULL,
+        banco_horas_ativo INTEGER DEFAULT 0,
+        ativo INTEGER DEFAULT 1,
+        FOREIGN KEY (id_cid) REFERENCES Cidade(id_cid),   
+        FOREIGN KEY (id_est) REFERENCES Estado(id_est),
+        FOREIGN KEY (id_funcao) REFERENCES funcoes(id_funcao)
     );
+                 
    CREATE TABLE IF NOT EXISTS Login (
         id_user INTEGER PRIMARY KEY,
         tipo_user INTEGER NOT NULL,
+        ultimo_login TEXT,
+        ativo INTEGER DEFAULT 1,
         senha TEXT NOT NULL,
         FOREIGN KEY (id_user) REFERENCES Funcionario(id_funcionario),
         FOREIGN KEY (tipo_user) REFERENCES Tipo_User(id_tipo)
@@ -67,6 +82,8 @@ def init_db(): # Função para inicializar o banco de dados, criando as tabelas 
         data_entr DATE,
         data_saida DATE,
         hor_entr TIME,
+        hor_saida_almoco TIME,
+        hor_volta_almoco TIME,
         hor_saida TIME,
         FOREIGN KEY (id_user) REFERENCES Login(id_user)
     );
@@ -96,7 +113,73 @@ def init_db(): # Função para inicializar o banco de dados, criando as tabelas 
         FOREIGN KEY (id_cid) REFERENCES Cidade(id_cid),
         FOREIGN KEY (id_est) REFERENCES Estado(id_est)
     );
+INSERT OR IGNORE INTO Tipo_User (id_tipo, nome_tipo)
+VALUES (1, 'Administrador');
+
+INSERT OR IGNORE INTO Tipo_User (id_tipo, nome_tipo)
+VALUES (2, 'Funcionario');
+
+INSERT OR IGNORE INTO Tipo_User (id_tipo, nome_tipo)
+VALUES (3, 'AdministradorFuncionario');
+
+
+INSERT OR IGNORE INTO Estado (id_est, nome, sigla)
+VALUES (1, 'São Paulo', 'SP');
+
+
+INSERT OR IGNORE INTO Cidade (id_cid, cidade, id_est)
+VALUES (1, 'Campinas', 1);
+
+
+INSERT OR IGNORE INTO funcoes
+(
+    id_funcao,
+    nome_funcao,
+    salario,
+    carga_horaria_semanal
+)
+VALUES
+(
+    1,
+    'Motorista',
+    3500,
+    44
+);
+
+
+INSERT OR IGNORE INTO funcoes
+(
+    id_funcao,
+    nome_funcao,
+    salario,
+    carga_horaria_semanal
+)
+VALUES
+(
+    2,
+    'Assistente Administrativo',
+    2500,
+    44
+);
+
+
+INSERT OR IGNORE INTO funcoes
+(
+    id_funcao,
+    nome_funcao,
+    salario,
+    carga_horaria_semanal
+)
+VALUES
+(
+    3,
+    'Gerente',
+    6000,
+    44
+);
     ''')
+    
+    
     conn.commit()
     conn.close()
 
