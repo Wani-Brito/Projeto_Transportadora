@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit",
@@ -6,3 +7,9 @@
   },
   "git.ignoreLimitWarning": true
 }
+=======
+    "python.analysis.extraPaths": [
+        "./backend/services"
+    ]
+}
+>>>>>>> 0e5b6c73fb9f6fc3991f0b613fa7b16aed42617b
